@@ -1,8 +1,8 @@
 @tool
 extends EditorPlugin
 
-const PluginTabContainer = preload("uid://ctutcmmga2vy6") # tree_tab_container.gd
-const SCENE = preload("uid://2dvub2jcbmvm") # tree_tab_container.tscn
+const PluginSplitPanel = preload("res://addons/addon_lib/brohd/alib_editor/editor_panel/plugin_split_panel.gd")
+const PLUGIN_TAB_CONTAINER = "uid://2dvub2jcbmvm" # tree_tab_container.tscn
 
 var settings_helper:ALibEditor.SettingHelper
 var _hide_filesystem:bool = false
@@ -30,6 +30,17 @@ func _enter_tree() -> void:
 	
 	EditorNodeRef.call_on_ready(_hide_fs)
 
+	
+	EditorPanelSingleton.register_tab("FileSystem", "res://addons/addon_lib/brohd/alib_editor/file_system/tree/filesystem_tab.gd")
+	
+	var layout = PluginSplitPanel.Layout.new()
+	layout.add_panel(PLUGIN_TAB_CONTAINER, {
+		"default_tabs":["res://addons/addon_lib/brohd/alib_editor/file_system/tree/filesystem_tab.gd"]
+	})
+	var icon = EditorInterface.get_base_control().get_theme_icon("FileTree", "EditorIcons")
+	EditorPanelSingleton.register_layout("FileSystem", layout, icon)
+
+
 func _instance_manager():
 	dm_instance_manager = DockManager.InstanceManager.new(self, true)
 
@@ -43,10 +54,19 @@ func _exit_tree() -> void:
 
 
 func _on_tool_menu_pressed():
-	var plugin_container = PluginTabContainer.get_instance(["uid://dmi6v1vnl5tug"]) # filesystem_tab.gd
-	plugin_container.name = "Files"
-	var ins = dm_instance_manager.new_freeable_dock_manager(plugin_container, DockManager.Slot.DOCK_SLOT_LEFT_BR)
+	var plugin_split_panel = PluginSplitPanel.new()
+	var ins = dm_instance_manager.new_freeable_dock_manager(plugin_split_panel, DockManager.Slot.DOCK_SLOT_LEFT_BR)
 	ins.allow_scene_reload = true
+	
+	#var layout = PluginSplitPanel.Layout.new()
+	#layout.add_panel(PLUGIN_TAB_CONTAINER, {
+		#"default_tabs":["res://addons/addon_lib/brohd/alib_editor/file_system/tree/filesystem_tab.gd"]
+	#})
+	
+	#plugin_split_panel.load_layout(layout)
+	var layout_data = EditorPanelSingleton.get_layout("FileSystem")
+	plugin_split_panel.load_layout(layout_data.get("layout"))
+	
 
 
 func _hide_fs():

@@ -4,6 +4,8 @@ extends EditorPlugin
 const PluginSplitPanel = preload("res://addons/addon_lib/brohd/alib_editor/editor_panel/plugin_split_panel.gd")
 const PLUGIN_TAB_CONTAINER = "uid://2dvub2jcbmvm" # tree_tab_container.tscn
 
+const TAB_PATH = "res://addons/addon_lib/brohd/alib_editor/file_system/components/filesystem_tab.gd" #! ensure-path
+
 var settings_helper:ALibEditor.SettingHelper
 var _hide_filesystem:bool = false
 
@@ -31,11 +33,11 @@ func _enter_tree() -> void:
 	EditorNodeRef.call_on_ready(_hide_fs)
 
 	
-	EditorPanelSingleton.register_tab("FileSystem", "res://addons/addon_lib/brohd/alib_editor/file_system/tree/filesystem_tab.gd")
+	EditorPanelSingleton.register_tab("FileSystem", TAB_PATH)
 	
 	var layout = PluginSplitPanel.Layout.new()
 	layout.add_panel(PLUGIN_TAB_CONTAINER, {
-		"default_tabs":["res://addons/addon_lib/brohd/alib_editor/file_system/tree/filesystem_tab.gd"]
+		"default_tabs":[TAB_PATH]
 	})
 	var icon = EditorInterface.get_base_control().get_theme_icon("FileTree", "EditorIcons")
 	EditorPanelSingleton.register_layout("FileSystem", layout, icon)

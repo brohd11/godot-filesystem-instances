@@ -2,8 +2,10 @@
 extends EditorPlugin
 
 const PluginSplitPanel = preload("res://addons/addon_lib/brohd/alib_editor/editor_panel/plugin_split_panel.gd")
-const PLUGIN_TAB_CONTAINER = "uid://2dvub2jcbmvm" # tree_tab_container.tscn
+const PLUGIN_TAB_CONTAINER = "uid://2dvub2jcbmvm" # plugin_tab_container.tscn
+const PluginTabContainer = preload("res://addons/addon_lib/brohd/alib_editor/editor_panel/plugin_tab_container.gd")
 
+const FileSystemTab = preload(TAB_PATH)
 const TAB_PATH = "res://addons/addon_lib/brohd/alib_editor/file_system/components/filesystem_tab.gd" #! ensure-path
 
 var settings_helper:ALibEditor.SettingHelper
@@ -31,6 +33,8 @@ func _enter_tree() -> void:
 	settings_helper.initialize()
 	
 	EditorNodeRef.call_on_ready(_hide_fs)
+	
+	EditorGlobalSignals.subscribe(FileSystemTab.DataKeys.GLOBAL_NEW_WINDOW_SIGNAL, new_window)
 
 	
 	EditorPanelSingleton.register_tab("FileSystem", TAB_PATH)
@@ -47,6 +51,7 @@ func _instance_manager():
 	dm_instance_manager = DockManager.InstanceManager.new(self, true)
 
 func _exit_tree() -> void:
+	FileSystemSingleton.reset_dialogs()
 	if is_instance_valid(filesystem_singleton):
 		filesystem_singleton.unregister_node(self)
 	if is_instance_valid(dm_instance_manager):
@@ -57,7 +62,7 @@ func _exit_tree() -> void:
 
 func _on_tool_menu_pressed():
 	var plugin_split_panel = PluginSplitPanel.new()
-	var ins = dm_instance_manager.new_freeable_dock_manager(plugin_split_panel, DockManager.Slot.DOCK_SLOT_LEFT_BR)
+	var ins = dm_instance_manager.new_freeable_dock_manager(plugin_split_panel, DockManager.Slot.FLOATING)
 	ins.allow_scene_reload = true
 	
 	#var layout = PluginSplitPanel.Layout.new()
@@ -68,8 +73,23 @@ func _on_tool_menu_pressed():
 	#plugin_split_panel.load_layout(layout)
 	var layout_data = EditorPanelSingleton.get_layout("FileSystem")
 	plugin_split_panel.load_layout(layout_data.get("layout"))
-	
 
+
+
+func new_window(data:Dictionary):
+	var tab_data = PluginTabContainer.Tabs.new()
+	tab_data.add_tab("FileSystem", TAB_PATH, data)
+	
+	var layout = PluginSplitPanel.Layout.new()
+	layout.add_panel(PluginTabContainer.get_scene_path(), tab_data.get_data())
+	
+	var plugin_split_panel = PluginSplitPanel.new()
+	var ins = dm_instance_manager.new_freeable_dock_manager(plugin_split_panel, DockManager.Slot.FLOATING)
+	ins.allow_scene_reload = true
+	plugin_split_panel.load_layout(layout)
+
+static func test():
+	EditorGlobalSignals.signal_emit(&"new_filesytem_instance", {"root_path":"res://addons/"})
 
 func _hide_fs():
 	if _hide_filesystem:

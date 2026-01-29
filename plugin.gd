@@ -8,11 +8,15 @@ const PluginTabContainer = preload("res://addons/addon_lib/brohd/alib_editor/edi
 const FileSystemTab = preload(TAB_PATH)
 const TAB_PATH = "res://addons/addon_lib/brohd/alib_editor/file_system/components/filesystem_tab.gd" #! ensure-path
 
+const ContextMenuPlugin = preload("res://addons/filesystem_instances/src/context_menu/context_menu_plugin.gd")
+
 var settings_helper:ALibEditor.SettingHelper
 var _hide_filesystem:bool = false
 
 var dm_instance_manager:DockManager.InstanceManager
 var filesystem_singleton:FileSystemSingleton
+
+var editor_plugin_manager:EditorPluginManager
 
 func _get_plugin_name() -> String:
 	return "Files"
@@ -32,10 +36,13 @@ func _enter_tree() -> void:
 	settings_helper.subscribe(&"_hide_filesystem", &"plugin/filesystem_instances/hide_editor_file_system", false)
 	settings_helper.initialize()
 	
+	editor_plugin_manager = EditorPluginManager.new(self)
+	editor_plugin_manager.add_context_menu_plugins([ContextMenuPlugin])
+	
 	EditorNodeRef.call_on_ready(_hide_fs)
 	
 	EditorGlobalSignals.subscribe(FileSystemTab.DataKeys.GLOBAL_NEW_WINDOW_SIGNAL, new_window)
-
+	EditorGlobalSignals.subscribe(FileSystemTab.DataKeys.GLOBAL_NEW_SPLIT_SIGNAL, new_split)
 	
 	EditorPanelSingleton.register_tab("FileSystem", TAB_PATH)
 	
@@ -56,6 +63,8 @@ func _exit_tree() -> void:
 		filesystem_singleton.unregister_node(self)
 	if is_instance_valid(dm_instance_manager):
 		dm_instance_manager.clean_up()
+	if is_instance_valid(editor_plugin_manager):
+		editor_plugin_manager.remove_plugins()
 	
 	remove_tool_menu_item("FileSystem Instance")
 
@@ -65,12 +74,6 @@ func _on_tool_menu_pressed():
 	var ins = dm_instance_manager.new_freeable_dock_manager(plugin_split_panel, DockManager.Slot.FLOATING)
 	ins.allow_scene_reload = true
 	
-	#var layout = PluginSplitPanel.Layout.new()
-	#layout.add_panel(PLUGIN_TAB_CONTAINER, {
-		#"default_tabs":["res://addons/addon_lib/brohd/alib_editor/file_system/tree/filesystem_tab.gd"]
-	#})
-	
-	#plugin_split_panel.load_layout(layout)
 	var layout_data = EditorPanelSingleton.get_layout("FileSystem")
 	plugin_split_panel.load_layout(layout_data.get("layout"))
 
@@ -88,8 +91,27 @@ func new_window(data:Dictionary):
 	ins.allow_scene_reload = true
 	plugin_split_panel.load_layout(layout)
 
-static func test():
-	EditorGlobalSignals.signal_emit(&"new_filesytem_instance", {"root_path":"res://addons/"})
+func new_split(calling_node:Node, direction:String, data:Dictionary):
+	var split = EditorPanelSingleton.get_split_panel_ancestor(calling_node) as PluginSplitPanel
+	
+	var tab_container = PluginTabContainer.get_scene().instantiate()
+	tab_container.load_default = false
+	
+	var split_dir := PluginSplitPanel.SplitType.HORIZONTAL_L
+	if direction == FileSystemTab.FSPopupHandler.NEW_SPLIT_LEFT:
+		pass
+	elif direction == FileSystemTab.FSPopupHandler.NEW_SPLIT_RIGHT:
+		split_dir = PluginSplitPanel.SplitType.HORIZONTAL_R
+	elif direction == FileSystemTab.FSPopupHandler.NEW_SPLIT_UP:
+		split_dir = PluginSplitPanel.SplitType.VERTICAL_U
+	elif direction == FileSystemTab.FSPopupHandler.NEW_SPLIT_DOWN:
+		split_dir = PluginSplitPanel.SplitType.VERTICAL_D
+	
+	split.new_split(calling_node, tab_container, split_dir)
+	
+	var tab = FileSystemTab.new()
+	tab.set_dock_data(data)
+	tab_container.add_tab(tab)
 
 func _hide_fs():
 	if _hide_filesystem:

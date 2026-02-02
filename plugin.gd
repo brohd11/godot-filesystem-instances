@@ -10,7 +10,7 @@ const TAB_PATH = "res://addons/addon_lib/brohd/alib_editor/file_system/component
 
 const ContextMenuPlugin = preload("res://addons/filesystem_instances/src/context_menu/context_menu_plugin.gd")
 
-var settings_helper:ALibEditor.SettingHelper
+var settings_helper:ALibEditor.Settings.SettingHelperEditor
 var _hide_filesystem:bool = false
 
 var dm_instance_manager:DockManager.InstanceManager
@@ -30,10 +30,10 @@ func _enter_tree() -> void:
 	add_tool_menu_item("FileSystem Instance", _on_tool_menu_pressed)
 	
 	filesystem_singleton = FileSystemSingleton.register_node(self)
-	filesystem_singleton.call_on_ready(_instance_manager)
+	FileSystemSingleton.call_on_ready(_instance_manager)
 	
-	settings_helper = ALibEditor.SettingHelper.new(self)
-	settings_helper.subscribe(&"_hide_filesystem", &"plugin/filesystem_instances/hide_editor_file_system", false)
+	settings_helper = ALibEditor.Settings.SettingHelperEditor.new()
+	settings_helper.subscribe_property(self, &"_hide_filesystem", &"plugin/filesystem_instances/hide_editor_file_system", false)
 	settings_helper.initialize()
 	
 	editor_plugin_manager = EditorPluginManager.new(self)
@@ -114,6 +114,8 @@ func new_split(calling_node:Node, direction:String, data:Dictionary):
 	tab_container.add_tab(tab)
 
 func _hide_fs():
+	if ALibRuntime.Utils.UVersion.get_minor_version() > 5:
+		return
 	if _hide_filesystem:
 		while not FileSystemSingleton.fs_dock_in_bottom_panel():
 			await get_tree().process_frame

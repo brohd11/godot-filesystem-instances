@@ -1,8 +1,9 @@
 @tool
 extends EditorPlugin
+#! remote
 
 const PluginSplitPanel = preload("res://addons/addon_lib/brohd/alib_editor/editor_panel/plugin_split_panel.gd")
-const PLUGIN_TAB_CONTAINER = "uid://2dvub2jcbmvm" # plugin_tab_container.tscn
+const PLUGIN_TAB_CONTAINER = "res://addons/addon_lib/brohd/alib_editor/editor_panel/plugin_tab_container.tscn" #! dependency
 const PluginTabContainer = preload("res://addons/addon_lib/brohd/alib_editor/editor_panel/plugin_tab_container.gd")
 
 const FileSystemTab = preload(TAB_PATH)
@@ -28,6 +29,8 @@ func _get_plugin_icon() -> Texture2D:
 
 func _enter_tree() -> void:
 	add_tool_menu_item("FileSystem Instance", _on_tool_menu_pressed)
+	
+	FileSystemTab.EditorSet.ensure_settings()
 	
 	filesystem_singleton = FileSystemSingleton.register_node(self)
 	FileSystemSingleton.call_on_ready(_instance_manager)
@@ -93,6 +96,9 @@ func new_window(data:Dictionary):
 
 func new_split(calling_node:Node, direction:String, data:Dictionary):
 	var split = EditorPanelSingleton.get_split_panel_ancestor(calling_node) as PluginSplitPanel
+	if not is_instance_valid(split):
+		printerr("Could not find split container.")
+		return
 	
 	var tab_container = PluginTabContainer.get_scene().instantiate()
 	tab_container.load_default = false

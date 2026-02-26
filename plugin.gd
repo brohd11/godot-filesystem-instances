@@ -1,6 +1,8 @@
 @tool
 extends EditorPlugin
 #! remote
+const FSClasses = preload("res://addons/addon_lib/brohd/alib_editor/file_system/util/fs_classes.gd")
+const FSUtil = FSClasses.FSUtil
 
 const PluginSplitPanel = preload("res://addons/addon_lib/brohd/alib_editor/editor_panel/plugin_split_panel.gd")
 const PLUGIN_TAB_CONTAINER = "res://addons/addon_lib/brohd/alib_editor/editor_panel/plugin_tab_container.tscn" #! dependency
@@ -11,7 +13,7 @@ const TAB_PATH = "res://addons/addon_lib/brohd/alib_editor/file_system/component
 
 const ContextMenuPlugin = preload("res://addons/filesystem_instances/src/context_menu/context_menu_plugin.gd")
 
-var settings_helper:ALibEditor.Settings.SettingHelperEditor
+var settings_helper:FSUtil.SettingHelperEditor
 var _hide_filesystem:bool = false
 
 var dm_instance_manager:DockManager.InstanceManager
@@ -35,14 +37,14 @@ func _enter_tree() -> void:
 	filesystem_singleton = FileSystemSingleton.register_node(self)
 	FileSystemSingleton.call_on_ready(_instance_manager)
 	
-	settings_helper = ALibEditor.Settings.SettingHelperEditor.new()
+	settings_helper = FSUtil.SettingHelperEditor.new()
 	settings_helper.subscribe_property(self, &"_hide_filesystem", &"plugin/filesystem_instances/hide_editor_file_system", false)
 	settings_helper.initialize()
 	
 	editor_plugin_manager = EditorPluginManager.new(self)
 	editor_plugin_manager.add_context_menu_plugins([ContextMenuPlugin])
 	
-	EditorNodeRef.call_on_ready(_hide_fs)
+	#EditorNodeRef.call_on_ready(_hide_fs)
 	
 	EditorGlobalSignals.subscribe(FileSystemTab.DataKeys.GLOBAL_NEW_WINDOW_SIGNAL, new_window)
 	EditorGlobalSignals.subscribe(FileSystemTab.DataKeys.GLOBAL_NEW_SPLIT_SIGNAL, new_split)
@@ -53,7 +55,7 @@ func _enter_tree() -> void:
 	layout.add_panel(PLUGIN_TAB_CONTAINER, {
 		"default_tabs":[TAB_PATH]
 	})
-	var icon = EditorInterface.get_base_control().get_theme_icon("FileTree", "EditorIcons")
+	var icon = FSUtil.EditorIcons.get_icon("FileTree")
 	EditorPanelSingleton.register_layout("FileSystem", layout, icon)
 
 
@@ -120,7 +122,7 @@ func new_split(calling_node:Node, direction:String, data:Dictionary):
 	tab_container.add_tab(tab)
 
 func _hide_fs():
-	if ALibRuntime.Utils.UVersion.get_minor_version() > 5:
+	if FSUtil.UVersion.get_minor_version() > 5:
 		return
 	if _hide_filesystem:
 		while not FileSystemSingleton.fs_dock_in_bottom_panel():

@@ -17,7 +17,6 @@ var settings_helper:FSUtil.SettingHelperEditor
 var _hide_filesystem:bool = false
 
 var dm_instance_manager:DockManager.InstanceManager
-var filesystem_singleton:FileSystemSingleton
 
 var editor_plugin_manager:EditorPluginManager
 
@@ -34,7 +33,7 @@ func _enter_tree() -> void:
 	
 	FileSystemTab.EditorSet.ensure_settings()
 	
-	filesystem_singleton = FileSystemSingleton.register_node(self)
+	FileSystemSingleton.register_node(self)
 	FileSystemSingleton.call_on_ready(_instance_manager)
 	
 	settings_helper = FSUtil.SettingHelperEditor.new()
@@ -64,8 +63,8 @@ func _instance_manager():
 
 func _exit_tree() -> void:
 	FileSystemSingleton.reset_dialogs()
-	if is_instance_valid(filesystem_singleton):
-		filesystem_singleton.unregister_node(self)
+	FileSystemSingleton.unregister_node(self)
+	
 	if is_instance_valid(dm_instance_manager):
 		dm_instance_manager.clean_up()
 	if is_instance_valid(editor_plugin_manager):

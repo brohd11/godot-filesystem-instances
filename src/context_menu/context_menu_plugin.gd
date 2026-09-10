@@ -1,5 +1,7 @@
 extends EditorContextMenuPlugin
 
+const Options = preload("uid://c61qxuau2v0pb") #! resolve ALibRuntime.Popups.Options
+
 const SLOT = CONTEXT_SLOT_FILESYSTEM
 
 const SCENE_PREVIEW = "FileSystem/Generate 3D Scene Preview"
@@ -20,7 +22,7 @@ func _on_popup_pressed(paths, item_name):
 
 
 func get_valid_items(paths: PackedStringArray) -> Dictionary:
-	var options = ALibRuntime.Popups.Options.new()
+	var options = Options.new()
 	for p in paths:
 		if FileSystemSingleton.get_file_type_static(p) == "PackedScene":
 			options.add_option(SCENE_PREVIEW, null, ["Filesystem", "Texture2D"])

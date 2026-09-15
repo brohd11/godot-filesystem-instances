@@ -9,7 +9,8 @@
 				"file_extensions": [],
 				"files": []
 			},
-			"export_folder": "filesystem-instances{{version=filesystem_instances}}/filesystem_instances",
+			"export_name": "filesystem-instances{{version=filesystem_instances}}",
+			"export_folder": "addons/filesystem_instances",
 			"other_transfers": [],
 			"parser_overide_settings": {
 				"parse_cs": {

@@ -9,7 +9,7 @@ const SCENE_PREVIEW = "FileSystem/Generate 3D Scene Preview"
 func _popup_menu(paths: PackedStringArray) -> void:
 	
 	var valid_items = get_valid_items(paths)
-	PopupWrapper.create_context_plugin_items(self, paths, valid_items, _on_popup_pressed)
+	PopupWrapper.ContextPlugin.create_items(self, paths, valid_items, _on_popup_pressed)
 
 
 func _on_popup_pressed(paths, item_name):

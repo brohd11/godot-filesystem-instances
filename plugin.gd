@@ -1,7 +1,7 @@
 @tool
 extends EditorPlugin
 #! remote
-const FSClasses = preload("res://addons/addon_lib/brohd/alib_editor/file_system/util/fs_classes.gd")
+const FSClasses = preload("res://addons/addon_lib/editor_filesystem/src/util/fs_classes.gd")
 const FSUtil = FSClasses.FSUtil
 
 const PluginSplitPanel = preload("res://addons/addon_lib/brohd/alib_editor/editor_panel/plugin_split_panel.gd")
@@ -9,7 +9,7 @@ const PLUGIN_TAB_CONTAINER = "res://addons/addon_lib/brohd/alib_editor/editor_pa
 const PluginTabContainer = preload("res://addons/addon_lib/brohd/alib_editor/editor_panel/plugin_tab_container.gd")
 
 const FileSystemTab = preload(TAB_PATH)
-const TAB_PATH = "res://addons/addon_lib/brohd/alib_editor/file_system/fs_tab/filesystem_tab.gd" #! ensure-path
+const TAB_PATH = "res://addons/addon_lib/editor_filesystem/src/fs_tab/filesystem_tab.gd" #! ensure-path
 
 const ContextMenuPlugin = preload("res://addons/filesystem_instances/src/context_menu/context_menu_plugin.gd")
 

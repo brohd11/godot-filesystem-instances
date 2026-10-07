@@ -1,6 +1,6 @@
 extends EditorContextMenuPlugin
 
-const Options = preload("uid://c61qxuau2v0pb") #! resolve ALibRuntime.Popups.Options
+const Options = preload("uid://dxdxq2n3imf4q") #! resolve UtilR.Nodes.PopupMenus.Options
 
 const SLOT = CONTEXT_SLOT_FILESYSTEM
 

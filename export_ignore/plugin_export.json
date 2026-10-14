@@ -58,6 +58,6 @@
 		}
 	},
 	"plugin_folder": "FilesystemInstances{{version=filesystem_instances}}",
-	"post_script": "res://addons/filesystem_instances/export_ignore/pre_post_export.gd",
-	"pre_script": "res://addons/filesystem_instances/export_ignore/pre_post_export.gd"
+	"post_script": "",
+	"pre_script": ""
 }

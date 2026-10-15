@@ -3,6 +3,7 @@ extends EditorPlugin
 #! remote
 const FSClasses = preload("res://addons/_lib/editor_filesystem/src/util/fs_classes.gd")
 const FSUtil = FSClasses.FSUtil
+const EditorGlobalSignals = FSUtil.EditorGlobalSignals
 
 const PluginSplitPanel = preload("res://addons/_lib/brohd/src/alib_editor/editor_panel/plugin_split_panel.gd")
 const PLUGIN_TAB_CONTAINER = "res://addons/_lib/brohd/src/alib_editor/editor_panel/plugin_tab_container.tscn" #! dependency
@@ -18,7 +19,7 @@ var _hide_filesystem:bool = false
 
 var dm_instance_manager:DockManager.InstanceManager
 
-var editor_plugin_manager:EditorPluginManager
+var editor_plugin_manager:PluginManager.Editor
 
 func _get_plugin_name() -> String:
 	return "Files"
@@ -40,7 +41,7 @@ func _enter_tree() -> void:
 	settings_helper.subscribe_property(self, &"_hide_filesystem", &"plugin/filesystem_instances/hide_editor_file_system", false)
 	settings_helper.initialize()
 	
-	editor_plugin_manager = EditorPluginManager.new(self)
+	editor_plugin_manager = PluginManager.Editor.new(self)
 	editor_plugin_manager.add_context_menu_plugins([ContextMenuPlugin])
 	
 	#EditorNodeRef.call_on_ready(_hide_fs)

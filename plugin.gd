@@ -5,9 +5,8 @@ const FSClasses = preload("res://addons/_lib/editor_filesystem/src/util/fs_class
 const FSUtil = FSClasses.FSUtil
 const EditorGlobalSignals = FSUtil.EditorGlobalSignals
 
-const PluginSplitPanel = preload("res://addons/_lib/brohd/src/alib_editor/editor_panel/plugin_split_panel.gd")
-const PLUGIN_TAB_CONTAINER = "res://addons/_lib/brohd/src/alib_editor/editor_panel/plugin_tab_container.tscn" #! dependency
-const PluginTabContainer = preload("res://addons/_lib/brohd/src/alib_editor/editor_panel/plugin_tab_container.gd")
+const PluginSplitPanel = preload("res://addons/_lib/editor_panels/src/plugin_split_panel.gd")
+const PluginTabContainer = preload("res://addons/_lib/editor_panels/src/plugin_tab_container.gd")
 
 const FileSystemTab = preload(TAB_PATH)
 const TAB_PATH = "res://addons/_lib/editor_filesystem/src/fs_tab/filesystem_tab.gd" #! ensure-path
@@ -52,7 +51,7 @@ func _enter_tree() -> void:
 	EditorPanelSingleton.register_tab("FileSystem", TAB_PATH)
 	
 	var layout = PluginSplitPanel.Layout.new()
-	layout.add_panel(PLUGIN_TAB_CONTAINER, {
+	layout.add_panel(PluginTabContainer.get_scene_path(), {
 		"default_tabs":[TAB_PATH]
 	})
 	var icon = FSUtil.EditorIcons.get_icon("FileTree")
@@ -102,7 +101,7 @@ func new_split(calling_node:Node, direction:String, data:Dictionary):
 		printerr("Could not find split container.")
 		return
 	
-	var tab_container = PluginTabContainer.get_scene().instantiate()
+	var tab_container = PluginTabContainer.new()
 	tab_container.load_default = false
 	
 	var split_dir := PluginSplitPanel.SplitType.HORIZONTAL_L

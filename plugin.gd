@@ -75,7 +75,7 @@ func _exit_tree() -> void:
 
 func _on_tool_menu_pressed():
 	var plugin_split_panel = PluginSplitPanel.new()
-	var ins = dm_instance_manager.new_freeable_dock_manager(plugin_split_panel, DockManager.Slot.FLOATING)
+	var ins = dm_instance_manager.new_freeable_dock_manager(plugin_split_panel, DockManager.DOCK_SLOT_NONE)
 	ins.allow_scene_reload = true
 	
 	var layout_data = EditorPanelSingleton.get_layout("FileSystem")
@@ -91,7 +91,7 @@ func new_window(data:Dictionary):
 	layout.add_panel(PluginTabContainer.get_scene_path(), tab_data.get_data())
 	
 	var plugin_split_panel = PluginSplitPanel.new()
-	var ins = dm_instance_manager.new_freeable_dock_manager(plugin_split_panel, DockManager.Slot.FLOATING)
+	var ins = dm_instance_manager.new_freeable_dock_manager(plugin_split_panel, DockManager.DOCK_SLOT_NONE)
 	ins.allow_scene_reload = true
 	plugin_split_panel.load_layout(layout)
 

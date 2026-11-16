@@ -1,6 +1,5 @@
 @tool
 extends EditorPlugin
-#! remote
 const FSClasses = preload("res://addons/_lib/editor_filesystem/src/util/fs_classes.gd")
 const FSUtil = FSClasses.FSUtil
 const EditorGlobalSignals = FSUtil.EditorGlobalSignals

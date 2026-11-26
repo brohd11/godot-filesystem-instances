@@ -1,6 +1,6 @@
 extends "res://addons/_lib/popup_wrapper/src/context_menu.gd" #! ext PopupWrapper.ContextMenu
 
-const Options = preload("uid://dxdxq2n3imf4q") #! resolve UtilR.Nodes.PopupMenus.Options
+const Options = UtilR.Nodes.PopupMenus.Options
 
 const SLOT = CONTEXT_SLOT_FILESYSTEM
 

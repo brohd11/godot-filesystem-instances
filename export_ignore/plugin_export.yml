@@ -1,0 +1,23 @@
+export_root: "res://addons/filesystem_instances/export_ignore/exports"
+exports:
+  -
+    export_name: "filesystem-instances{{version=filesystem_instances}}"
+    export_folder: addons/filesystem_instances
+    other_transfers: []
+    source: "res://addons/filesystem_instances"
+options:
+  include_import: true
+  include_uid: true
+  overwrite: true
+  parser_settings:
+    parse_cs:
+      namespace_rename: {}
+    parse_gd:
+      reduce_access_paths: true
+      class_rename_ignore: []
+    parse_tres: {}
+    parse_tscn: {}
+    use_relative_paths: false
+plugin_folder: "FilesystemInstances{{version=filesystem_instances}}"
+post_script: ""
+pre_script: ""

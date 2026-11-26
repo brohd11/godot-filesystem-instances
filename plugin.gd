@@ -12,9 +12,6 @@ const TAB_PATH = "res://addons/_lib/editor_filesystem/src/fs_tab/filesystem_tab.
 
 const ContextMenuPlugin = preload("res://addons/filesystem_instances/src/context_menu/context_menu_plugin.gd")
 
-var settings_helper:FSUtil.SettingHelperEditor
-var _hide_filesystem:bool = false
-
 var dm_instance_manager:DockManager.InstanceManager
 
 var editor_plugin_manager:PluginManager.Editor
@@ -23,7 +20,6 @@ func _get_plugin_name() -> String:
 	return "Files"
 
 func _get_plugin_icon() -> Texture2D:
-	#return EditorInterface.get_base_control().get_theme_icon("Folder", "EditorIcons")
 	return EditorInterface.get_base_control().get_theme_icon("FileTree", "EditorIcons")
 
 
@@ -35,15 +31,9 @@ func _enter_tree() -> void:
 	FileSystemSingleton.register_node(self)
 	FileSystemSingleton.call_on_ready(_instance_manager)
 	
-	settings_helper = FSUtil.SettingHelperEditor.new()
-	settings_helper.subscribe_property(self, &"_hide_filesystem", &"plugin/filesystem_instances/hide_editor_file_system", false)
-	settings_helper.initialize()
-	
 	editor_plugin_manager = PluginManager.Editor.new(self)
 	editor_plugin_manager.add_context_menu_plugins([ContextMenuPlugin])
-	
-	#EditorNodeRef.call_on_ready(_hide_fs)
-	
+
 	EditorGlobalSignals.subscribe(FileSystemTab.DataKeys.GLOBAL_NEW_WINDOW_SIGNAL, new_window)
 	EditorGlobalSignals.subscribe(FileSystemTab.DataKeys.GLOBAL_NEW_SPLIT_SIGNAL, new_split)
 	
@@ -118,14 +108,3 @@ func new_split(calling_node:Node, direction:String, data:Dictionary):
 	var tab = FileSystemTab.new()
 	tab.set_dock_data(data)
 	tab_container.add_tab(tab)
-
-func _hide_fs():
-	if FSUtil.UVersion.get_minor_version() > 5:
-		return
-	if _hide_filesystem:
-		while not FileSystemSingleton.fs_dock_in_bottom_panel():
-			await get_tree().process_frame
-		FileSystemSingleton.hide_filesystem()
-	else:
-		if FileSystemSingleton.fs_dock_in_bottom_panel():
-			FileSystemSingleton.show_filesystem()
